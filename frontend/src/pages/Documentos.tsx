@@ -37,7 +37,7 @@ const Documentos = () => {
     }, []);
 
     const handleItemList = (documento: String) => {
-        navigate(`/documentos/${documento}`)
+        navigate(`/documento/${documento}`)
     }
 
     const handleEdit = (documento: Idocumentos) => {
