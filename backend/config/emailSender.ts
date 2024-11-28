@@ -21,13 +21,13 @@ export const sendEmail = (
   transporter.sendMail(
     {
       from: user, // Endereço de quem envia
-      to: "teste", // Endereço de quem recebe
+      to: "jvsplayer1227@gmail.com", // Endereço de quem recebe
       subject: "Documento Importante", // Assunto do e-mail
       html: `
                 <html>
                     <h1>Documentação</h1>
                     <p>Aluno: ${aluno}</p>
-                    <a href="http://localhost:5173/documento/${arquivo}/${token}">Acesse o documento aqui!</a>
+                    <a href="http://localhost:5173/validation/${arquivo}/${token}">Acesse o documento aqui!</a>
                 </html>
                 `,
     },

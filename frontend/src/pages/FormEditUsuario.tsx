@@ -1,25 +1,37 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Box, Button, Container, TextField, Typography } from '@mui/material';
 import useUsuario from '../hooks/useUsuario';
 import AdminMenu from '../components/AdminMenu.component';
+import Error from '../components/Error.component';
 
-const Cadastro = () => {
-
+const FormEditUsuario = () => {
+    const { id } = useParams()
     const [nome, setNome] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
-    const { createUsuario, loading, error } = useUsuario()
-
-
+    const { editUsuario, getUsuario, loading, error } = useUsuario()
     const navigate = useNavigate()
+
+    useEffect(() => {
+        const fetchUsuario = async () => {
+            if (!id) { return }
+            const { usuario } = await getUsuario(id)
+            setNome(usuario.nome)
+            setEmail(usuario.email)
+        }
+
+        fetchUsuario()
+    }, [])
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
         try {
-            await createUsuario(nome, email, password, 'user')
+            if (!id) { return }
+
+            await editUsuario(id, nome, email, password, 'user')
 
             // setEmail("")
             // setPassword("")
@@ -44,7 +56,7 @@ const Cadastro = () => {
                         alignItems: 'center',
                     }}
                 >
-                    <Typography component="h1" variant='h5'>Cadastrar Novo Usuário</Typography>
+                    <Typography component="h1" variant='h5'>Editar Usuário</Typography>
                     <Box component="form" onSubmit={handleSubmit}>
 
                         <TextField
@@ -68,6 +80,7 @@ const Cadastro = () => {
                             id="email"
                             label="Email"
                             name="email"
+                            disabled
                             autoComplete="email"
                             onChange={(e) => setEmail(e.target.value)}
                             value={email}
@@ -75,10 +88,9 @@ const Cadastro = () => {
                         <TextField
                             variant="outlined"
                             margin="normal"
-                            required
                             fullWidth
                             name="Senha"
-                            label="Senha"
+                            label="Nova Senha"
                             type="password"
                             id="password"
                             autoComplete="current-password"
@@ -88,10 +100,9 @@ const Cadastro = () => {
                         <TextField
                             variant="outlined"
                             margin="normal"
-                            required
                             fullWidth
                             name="Confirmar senha"
-                            label="Confirmar senha"
+                            label="Confirmar Nova senha"
                             type="password"
                             id="confirm-password"
                             autoComplete="current-confirm-password"
@@ -110,8 +121,9 @@ const Cadastro = () => {
 
                 </Box>
             </Container>
+            {error && <Error texto={error} />}
         </Box>
     );
 }
 
-export default Cadastro
+export default FormEditUsuario

@@ -3,8 +3,7 @@ import { DocumentoSchema } from "../models/Documento.model";
 import fs from "fs";
 import Logger from "../../config/logger";
 import { UsuarioSchema } from "../models/Usuario.model";
-import { sendEmail } from "../../config/emailSender";
-import { hashPassword } from "../../config/hashFunctions";
+import { sendAndReturnListFormatEmail } from "./email.controller";
 
 const deleteFile = (filePath: string) => {
   fs.unlink(filePath, (err) => {
@@ -16,25 +15,6 @@ const deleteFile = (filePath: string) => {
   });
 };
 
-const sendAndReturnListFomrmatEmail = async (
-  emails: string[],
-  aluno: string,
-  documento: string
-) => {
-  // mudar de hash para jwt
-  const random = Math.random();
-  const hash = await hashPassword(String(random));
-
-  return emails.map((email: string) => {
-    sendEmail(email, aluno, documento, hash);
-    return {
-      email,
-      hash,
-      isRead: false,
-    };
-  });
-};
-
 export async function createDocumento(req: Request, res: Response) {
   try {
     const data = req.body;
@@ -42,7 +22,7 @@ export async function createDocumento(req: Request, res: Response) {
     const documento = req.file?.filename;
     const arrayEmails: string[] = JSON.parse(emails);
 
-    const formatEmail = await sendAndReturnListFomrmatEmail(
+    const formatEmail = sendAndReturnListFormatEmail(
       arrayEmails,
       aluno,
       documento!
@@ -54,7 +34,7 @@ export async function createDocumento(req: Request, res: Response) {
       documento,
     };
 
-    DocumentoSchema.create(documentoData);
+    await DocumentoSchema.create(documentoData);
 
     return res.status(201).json(documentoData);
   } catch (e: any) {

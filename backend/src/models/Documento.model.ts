@@ -3,7 +3,7 @@ import { model, Schema } from "mongoose";
 // Definindo o esquema para o email
 const emailSchema = new Schema({
   email: { type: String, required: true },
-  hash: { type: String, required: true },
+  token: { type: String, required: true },
   isRead: { type: Boolean, default: false },
 });
 
